@@ -81,6 +81,8 @@ runs:
         # [htmlcov-generate]
 
         cd ${{inputs.path}}
+        ls -lah .
+        go env
         ~/.cache/htmlcov ${{inputs.profile}}
 
     - id: htmlcov-upload
