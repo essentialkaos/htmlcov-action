@@ -33,16 +33,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - id: htmlcov-bin-cache
-      name: Cache htmlcov binary
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/htmlcov
-        key: ${{runner.os}}-ek-htmlcov-action-v${{inputs.version}}
-
     - id: htmlcov-install
       name: Install HTMLCov
-      if: steps.htmlcov-bin-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         # [htmlcov-install]
