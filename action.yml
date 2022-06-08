@@ -81,7 +81,7 @@ runs:
         # [htmlcov-generate]
 
         cd ${{inputs.path}}
-        ~/.cache/htmlcov -r ${{inputs.profile}}
+        ~/.cache/htmlcov ${{inputs.profile}}
 
     - id: htmlcov-upload
       name: Upload HTML artifact
