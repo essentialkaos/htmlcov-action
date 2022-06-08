@@ -1,0 +1,87 @@
+name: "EK HTMLCov"
+description: "Action for generating HTML files with Go coverage info"
+author: "ESSENTIALKAOS"
+
+branding:
+  icon: 'trending-up'
+  color: 'white'
+
+inputs:
+  profile:
+    description: "Path to coverage profile"
+    required: true
+
+  output:
+    description: "Output artifact name"
+    required: false
+    default: "Coverage"
+
+  version:
+    description: "Version of HTMLCov"
+    required: false
+    default: "1.0.1"
+
+  retention:
+    description: "Retention in days"
+    required: false
+    default: 3
+
+runs:
+  using: "composite"
+  steps:
+    - id: htmlcov-bin-cache
+      name: Cache htmlcov binary
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/htmlcov
+        key: ${{runner.os}}-ek-htmlcov-action-v${{inputs.version}}
+
+    - id: htmlcov-install
+      name: Install HTMLCov
+      if: steps.htmlcov-bin-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        # [htmlcov-install]
+
+        echo -e "::group::\033[34mDownloading HTMLCov…\033[0m"
+
+        mkdir -p ~/.cache
+
+        if [[ "$RUNNER_OS" == "Linux" ]] ; then
+          wget -O ~/.cache/htmlcov "https://apps.kaos.st/htmlcov/${{inputs.version}}/linux/x86_64/htmlcov" 2>&1
+        elif [[ "$RUNNER_OS" == "macOS" ]] ; then
+          wget -O ~/.cache/htmlcov "https://apps.kaos.st/htmlcov/${{inputs.version}}/linux/x86_64/htmlcov" 2>&1
+        else
+          echo "::error::$RUNNER_OS is not supported"
+          exit 1
+        fi
+
+        chmod +x ~/.cache/htmlcov
+
+        echo "::endgroup::"
+
+    - id: htmlcov-version-print
+      name: Print HTMLCov version info
+      shell: bash
+      run: |
+        # [htmlcov-version-print]
+
+        echo -e "::group::\033[34mPrint HTMLCov version…\033[0m"
+        ~/.cache/htmlcov --version
+        echo "::endgroup::"
+
+    - id: htmlcov-generate
+      name: Generate HTML
+      shell: bash
+      run: |
+        # [htmlcov-generate]
+
+        ~/.cache/htmlcov -r ${{inputs.profile}}
+
+    - id: htmlcov-upload
+      name: Upload HTML artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{inputs.output}}
+        path: coverage.html
+        retention-days: ${{inputs.retention}}
