@@ -47,20 +47,12 @@ runs:
       run: |
         # [htmlcov-install]
 
-        echo -e "::group::\033[34mDownloading HTMLCov…\033[0m"
+        echo -e "::group::\033[34mBuilding HTMLCov…\033[0m"
+
+        go install github.com/essentialkaos/htmlcov@v${{inputs.version}}
 
         mkdir -p ~/.cache
-
-        if [[ "$RUNNER_OS" == "Linux" ]] ; then
-          wget -O ~/.cache/htmlcov "https://apps.kaos.st/htmlcov/${{inputs.version}}/linux/x86_64/htmlcov" 2>&1
-        elif [[ "$RUNNER_OS" == "macOS" ]] ; then
-          wget -O ~/.cache/htmlcov "https://apps.kaos.st/htmlcov/${{inputs.version}}/linux/x86_64/htmlcov" 2>&1
-        else
-          echo "::error::$RUNNER_OS is not supported"
-          exit 1
-        fi
-
-        chmod +x ~/.cache/htmlcov
+        cp "$(which htmlcov)" ~/.cache/htmlcov
 
         echo "::endgroup::"
 
@@ -81,8 +73,6 @@ runs:
         # [htmlcov-generate]
 
         cd ${{inputs.path}}
-        ls -lah .
-        go env
         ~/.cache/htmlcov ${{inputs.profile}}
 
     - id: htmlcov-upload
