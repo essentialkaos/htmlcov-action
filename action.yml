@@ -11,6 +11,10 @@ inputs:
     description: "Path to coverage profile"
     required: true
 
+  path:
+    description: "Path to directory with sources"
+    required: true
+
   output:
     description: "Output artifact name"
     required: false
@@ -76,6 +80,7 @@ runs:
       run: |
         # [htmlcov-generate]
 
+        cd ${{inputs.path}}
         ~/.cache/htmlcov -r ${{inputs.profile}}
 
     - id: htmlcov-upload
@@ -83,5 +88,5 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{inputs.output}}
-        path: coverage.html
+        path: ${{inputs.path}}/coverage.html
         retention-days: ${{inputs.retention}}

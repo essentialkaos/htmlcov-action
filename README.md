@@ -43,7 +43,8 @@ jobs:
       - name: Check scripts with Shellcheck
         uses: essentialkaos/htmlcov-action@v1
         with:
-          profile: ${{env.SRC_DIR}}/covprofile
+          path: ${{env.SRC_DIR}}
+          profile: covprofile
 ```
 
 ### Options
@@ -51,6 +52,7 @@ jobs:
 | Option | Description | Value |
 |--------|-------------|-------|
 | `profile` | Path to coverage profile | _Path_ |
+| `path` | Path to directory with sources | _Path_ |
 | `output` | Output artifact name (_default:_ `Coverage`) | _String_ |
 | `version` | Version of HTMLCov | _Version in semver notation_ |
 | `retention` | Retention in days (_default:_ `3`) | _Number_ |
