@@ -23,7 +23,7 @@ inputs:
   version:
     description: "Version of HTMLCov"
     required: false
-    default: "1.1.1"
+    default: "latest"
 
   retention:
     description: "Retention in days"
@@ -41,7 +41,17 @@ runs:
 
         echo -e "::group::\033[34mBuilding HTMLCov…\033[0m"
 
-        go install github.com/essentialkaos/htmlcov@v${{inputs.version}}
+        version=${{inputs.version}}
+
+        if [[ "$version" != "latest" ]] ; then
+          version="v$version"
+        fi
+
+        if ! go install "github.com/essentialkaos/htmlcov@$version" ; then
+          echo "::endgroup::"
+          echo "::error::Can't install htmlcov (version: $version)"
+          exit 1
+        fi
 
         mkdir -p ~/.cache
         cp "$(which htmlcov)" ~/.cache/htmlcov
